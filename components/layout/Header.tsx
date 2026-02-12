@@ -1,8 +1,56 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import Avatar from "@/components/ui/Avatar";
 
-export default function Header() {
+const pageTitles: Record<string, string> = {
+  "/overview":     "Overview",
+  "/revenue":      "Revenue",
+  "/transactions": "Transactions",
+  "/customers":    "Customers",
+  "/settings":     "Settings",
+};
+
+interface HeaderProps {
+  onToggle: () => void;
+  collapsed: boolean;
+}
+
+export default function Header({ onToggle, collapsed }: HeaderProps) {
+  const pathname = usePathname();
+  const title = pageTitles[pathname] ?? "";
+
   return (
-    <header className="flex h-14 shrink-0 items-center border-b border-border bg-surface px-6">
+    <header className="flex h-14 shrink-0 items-center border-b border-border bg-surface px-4">
+      {/* Sidebar toggle — hamburger on mobile, chevron on desktop */}
+      <button
+        onClick={onToggle}
+        aria-label="Toggle sidebar"
+        className="flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-raised hover:text-foreground"
+      >
+        {/* Mobile: always show hamburger */}
+        <svg className="lg:hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="3" y1="6"  x2="21" y2="6"  />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+        {/* Desktop: chevron direction reflects sidebar state */}
+        {collapsed ? (
+          <svg className="hidden lg:block" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        ) : (
+          <svg className="hidden lg:block" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+        )}
+      </button>
+
+      {/* Page title */}
+      {title && (
+        <span className="ml-3 text-sm font-medium text-foreground">{title}</span>
+      )}
+
       <div className="ml-auto flex items-center gap-3">
         <button
           aria-label="Notifications"

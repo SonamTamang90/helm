@@ -8,6 +8,7 @@ Helm is a dark SaaS **Revenue & Finance dashboard** for businesses to track MRR,
 - **React** — UI library
 - **TypeScript** — strict mode enabled
 - **Tailwind CSS** — utility-first styling
+- **Recharts** — charts (lazy loaded with `dynamic()`, always `ssr: false`)
 
 ## Production Standards
 
