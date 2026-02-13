@@ -122,6 +122,20 @@ helm/
 - `constants/` — no functions, plain data only
 - Never import from `app/` into `components/` — keep the boundary clean
 
+### Types
+
+All shared domain types live in `types/`. Never define a shared type inline inside a component.
+
+| File | Exports |
+| ---- | ------- |
+| `types/transaction.ts` | `TransactionStatus`, `Transaction` |
+| `types/customer.ts` | `CustomerStatus`, `Customer`, `TopCustomer` |
+| `types/common.ts` | `SortDir`, `Period`, `DataPoint` |
+| `types/nav.ts` | `NavItem` |
+
+- Component-local prop interfaces (e.g. `StatCardProps`) stay in their component file — do not move them to `types/`
+- Always use `import type` when importing from `types/`
+
 ## Development Approach
 
 - Build step by step, piece by piece — one thing at a time

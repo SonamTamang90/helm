@@ -3,12 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Logo from "@/components/layout/Logo";
-
-interface NavItem {
-  label: string;
-  href: string;
-  icon: React.ReactNode;
-}
+import type { NavItem } from "@/types/nav";
 
 const mainNav: NavItem[] = [
   {

@@ -2,18 +2,9 @@ import Avatar from "@/components/ui/Avatar";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import Link from "next/link";
+import type { TopCustomer, CustomerStatus } from "@/types/customer";
 
-type Status = "active" | "trial" | "churned";
-
-interface TopCustomer {
-  name: string;
-  email: string;
-  plan: string;
-  mrr: string;
-  status: Status;
-}
-
-const statusVariant: Record<Status, "success" | "warning" | "destructive"> = {
+const statusVariant: Record<CustomerStatus, "success" | "warning" | "destructive"> = {
   active:  "success",
   trial:   "warning",
   churned: "destructive",

@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { useState } from "react";
 import Card from "@/components/ui/Card";
+import type { Period } from "@/types/common";
 
 const RevenueDetailChart = dynamic(() => import("@/components/charts/RevenueDetailChart"), { ssr: false });
 const PlanBreakdownChart  = dynamic(() => import("@/components/charts/PlanBreakdownChart"),  { ssr: false });
@@ -22,7 +23,6 @@ const allMonths = [
   { month: "Dec", mrr: 48200 },
 ];
 
-type Period = "3M" | "6M" | "12M";
 const periodSlice: Record<Period, number> = { "3M": 3, "6M": 6, "12M": 12 };
 
 const monthlyBreakdown = allMonths.map((m, i, arr) => {

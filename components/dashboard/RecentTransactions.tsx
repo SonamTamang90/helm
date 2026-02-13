@@ -1,18 +1,7 @@
 import Link from "next/link";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
-
-type Status = "paid" | "pending" | "failed";
-
-interface Transaction {
-  id: string;
-  customer: string;
-  email: string;
-  plan: string;
-  amount: string;
-  status: Status;
-  date: string;
-}
+import type { Transaction, TransactionStatus } from "@/types/transaction";
 
 const transactions: Transaction[] = [
   { id: "1", customer: "Acme Corp",        email: "billing@acme.com",      plan: "Pro",        amount: "$299", status: "paid",    date: "Feb 12, 2026" },
@@ -22,7 +11,7 @@ const transactions: Transaction[] = [
   { id: "5", customer: "Stark Industries",  email: "tony@stark.com",        plan: "Enterprise", amount: "$599", status: "paid",    date: "Feb 10, 2026" },
 ];
 
-const statusVariant: Record<Status, "success" | "warning" | "destructive"> = {
+const statusVariant: Record<TransactionStatus, "success" | "warning" | "destructive"> = {
   paid:    "success",
   pending: "warning",
   failed:  "destructive",

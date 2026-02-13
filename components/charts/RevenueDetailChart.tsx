@@ -9,11 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-
-interface DataPoint {
-  month: string;
-  mrr: number;
-}
+import type { DataPoint } from "@/types/common";
 
 interface CustomTooltipProps {
   active?: boolean;

@@ -4,18 +4,8 @@ import { useState } from "react";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
-
-type Status = "paid" | "pending" | "failed";
-
-interface Transaction {
-  id: string;
-  customer: string;
-  email: string;
-  plan: string;
-  amount: string;
-  status: Status;
-  date: string;
-}
+import type { Transaction, TransactionStatus } from "@/types/transaction";
+import type { SortDir } from "@/types/common";
 
 const allTransactions: Transaction[] = [
   { id: "1",  customer: "Acme Corp",         email: "billing@acme.com",       plan: "Pro",        amount: "$299", status: "paid",    date: "Feb 12, 2026" },
@@ -35,13 +25,13 @@ const allTransactions: Transaction[] = [
   { id: "15", customer: "Buy n Large",        email: "ceo@buynlarge.com",      plan: "Enterprise", amount: "$599", status: "paid",    date: "Feb 05, 2026" },
 ];
 
-const statusVariant: Record<Status, "success" | "warning" | "destructive"> = {
+const statusVariant: Record<TransactionStatus, "success" | "warning" | "destructive"> = {
   paid:    "success",
   pending: "warning",
   failed:  "destructive",
 };
 
-type Filter = "all" | Status;
+type Filter = "all" | TransactionStatus;
 const filters: { label: string; value: Filter }[] = [
   { label: "All",     value: "all"     },
   { label: "Paid",    value: "paid"    },
@@ -50,7 +40,6 @@ const filters: { label: string; value: Filter }[] = [
 ];
 
 type SortField = "customer" | "plan" | "amount" | "status" | "date";
-type SortDir   = "asc" | "desc";
 
 const PAGE_SIZE = 10;
 
