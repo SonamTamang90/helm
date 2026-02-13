@@ -4,6 +4,7 @@ import Card from "@/components/ui/Card";
 import Link from "next/link";
 import type { TopCustomer } from "@/types/customer";
 import { customerStatusVariant } from "@/constants/status";
+import { getInitials } from "@/lib/utils";
 
 const topCustomers: TopCustomer[] = [
   { name: "Waystar Royco",      email: "logan@waystar.com",     plan: "Enterprise", mrr: "$599", status: "active" },
@@ -12,15 +13,6 @@ const topCustomers: TopCustomer[] = [
   { name: "Buy n Large",        email: "ceo@buynlarge.com",     plan: "Enterprise", mrr: "$599", status: "active" },
   { name: "Acme Corp",          email: "billing@acme.com",      plan: "Pro",        mrr: "$299", status: "active" },
 ];
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase();
-}
 
 export default function TopCustomers() {
   return (

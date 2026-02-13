@@ -8,6 +8,7 @@ import type { Customer, CustomerStatus } from "@/types/customer";
 import type { SortDir } from "@/types/common";
 import { customerStatusVariant } from "@/constants/status";
 import { useTableState } from "@/hooks/useTableState";
+import { parseCurrency, parseDate, getInitials } from "@/lib/utils";
 
 const allCustomers: Customer[] = [
   { id: "1",  name: "Acme Corp",          email: "billing@acme.com",       plan: "Pro",        mrr: "$299",  ltv: "$3,588",  status: "active",  joined: "Mar 2024" },
@@ -37,35 +38,18 @@ const filters: { label: string; value: Filter }[] = [
 
 type SortField = "name" | "plan" | "mrr" | "ltv" | "status" | "joined";
 
-function parseDollar(v: string) {
-  return parseFloat(v.replace(/[$,]/g, ""));
-}
-
-function parseJoinedDate(v: string) {
-  return new Date(v).getTime();
-}
-
 function sortCustomers(data: Customer[], field: SortField, dir: SortDir) {
   return [...data].sort((a, b) => {
     let cmp = 0;
     if (field === "mrr" || field === "ltv") {
-      cmp = parseDollar(a[field]) - parseDollar(b[field]);
+      cmp = parseCurrency(a[field]) - parseCurrency(b[field]);
     } else if (field === "joined") {
-      cmp = parseJoinedDate(a.joined) - parseJoinedDate(b.joined);
+      cmp = parseDate(a.joined) - parseDate(b.joined);
     } else {
       cmp = a[field].localeCompare(b[field]);
     }
     return dir === "asc" ? cmp : -cmp;
   });
-}
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase();
 }
 
 const SearchIcon = (

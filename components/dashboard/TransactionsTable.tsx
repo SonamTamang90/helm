@@ -7,6 +7,7 @@ import type { Transaction, TransactionStatus } from "@/types/transaction";
 import type { SortDir } from "@/types/common";
 import { transactionStatusVariant } from "@/constants/status";
 import { useTableState } from "@/hooks/useTableState";
+import { parseCurrency, parseDate } from "@/lib/utils";
 
 const allTransactions: Transaction[] = [
   { id: "1",  customer: "Acme Corp",         email: "billing@acme.com",       plan: "Pro",        amount: "$299", status: "paid",    date: "Feb 12, 2026" },
@@ -36,21 +37,13 @@ const filters: { label: string; value: Filter }[] = [
 
 type SortField = "customer" | "plan" | "amount" | "status" | "date";
 
-function parseDollar(v: string) {
-  return parseFloat(v.replace(/[$,]/g, ""));
-}
-
-function parseTxDate(v: string) {
-  return new Date(v).getTime();
-}
-
 function sortTransactions(data: Transaction[], field: SortField, dir: SortDir) {
   return [...data].sort((a, b) => {
     let cmp = 0;
     if (field === "amount") {
-      cmp = parseDollar(a.amount) - parseDollar(b.amount);
+      cmp = parseCurrency(a.amount) - parseCurrency(b.amount);
     } else if (field === "date") {
-      cmp = parseTxDate(a.date) - parseTxDate(b.date);
+      cmp = parseDate(a.date) - parseDate(b.date);
     } else {
       cmp = a[field].localeCompare(b[field]);
     }

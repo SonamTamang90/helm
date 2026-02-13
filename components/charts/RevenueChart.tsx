@@ -9,6 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { formatCompactCurrency, formatCurrency } from "@/lib/utils";
 
 const data = [
   { month: "Jan", mrr: 38000 },
@@ -24,10 +25,6 @@ const data = [
   { month: "Nov", mrr: 47500 },
   { month: "Dec", mrr: 48200 },
 ];
-
-function formatYAxis(value: number) {
-  return `$${(value / 1000).toFixed(0)}k`;
-}
 
 interface TooltipPayload {
   value: number;
@@ -45,7 +42,7 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
     <div className="rounded-md border border-border bg-surface px-3 py-2 text-xs">
       <p className="text-muted">{label}</p>
       <p className="mt-0.5 font-medium text-foreground">
-        ${payload[0].value.toLocaleString()}
+        {formatCurrency(payload[0].value)}
       </p>
     </div>
   );
@@ -70,7 +67,7 @@ export default function RevenueChart() {
           dy={8}
         />
         <YAxis
-          tickFormatter={formatYAxis}
+          tickFormatter={formatCompactCurrency}
           axisLine={false}
           tickLine={false}
           tick={{ fill: "#78716c", fontSize: 12 }}

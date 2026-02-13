@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import Card from "@/components/ui/Card";
 import type { Period } from "@/types/common";
+import { formatCurrency } from "@/lib/utils";
 
 const RevenueDetailChart = dynamic(() => import("@/components/charts/RevenueDetailChart"), { ssr: false });
 const PlanBreakdownChart  = dynamic(() => import("@/components/charts/PlanBreakdownChart"),  { ssr: false });
@@ -98,7 +99,7 @@ export default function RevenuePageCharts() {
                     className={`transition-colors hover:bg-surface-raised/40 ${i !== monthlyBreakdown.length - 1 ? "border-b border-border" : ""}`}
                   >
                     <td className="px-5 py-3 font-medium text-foreground">{row.month}</td>
-                    <td className="px-5 py-3 text-foreground">${row.mrr.toLocaleString()}</td>
+                    <td className="px-5 py-3 text-foreground">{formatCurrency(row.mrr)}</td>
                     <td className="px-5 py-3">
                       {row.growth === null ? (
                         <span className="text-muted">—</span>

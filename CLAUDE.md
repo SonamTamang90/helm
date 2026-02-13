@@ -122,6 +122,18 @@ helm/
 - `constants/` — no functions, plain data only
 - Never import from `app/` into `components/` — keep the boundary clean
 
+### Utilities
+
+All shared pure functions live in `lib/utils.ts`. Never duplicate a utility inline across components.
+
+| Function | Signature | Example |
+| -------- | --------- | ------- |
+| `formatCurrency` | `(value: number) → string` | `48200` → `"$48,200"` |
+| `formatCompactCurrency` | `(value: number) → string` | `48200` → `"$48k"` (chart axes) |
+| `parseCurrency` | `(value: string) → number` | `"$3,588"` → `3588` (sorting) |
+| `parseDate` | `(value: string) → number` | `"Feb 12, 2026"` → timestamp (sorting) |
+| `getInitials` | `(name: string) → string` | `"Acme Corp"` → `"AC"` |
+
 ### Hooks
 
 All shared stateful logic lives in `hooks/`. Every file must export a single hook prefixed with `use`.

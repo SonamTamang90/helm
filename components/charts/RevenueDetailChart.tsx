@@ -10,6 +10,7 @@ import {
   YAxis,
 } from "recharts";
 import type { DataPoint } from "@/types/common";
+import { formatCompactCurrency, formatCurrency } from "@/lib/utils";
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -23,14 +24,13 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
     <div className="rounded border border-border bg-surface px-3 py-2 text-xs">
       <p className="text-muted">{label}</p>
       <p className="mt-0.5 font-medium text-foreground">
-        ${payload[0].value.toLocaleString()}
+        {formatCurrency(payload[0].value)}
       </p>
     </div>
   );
 }
 
 export default function RevenueDetailChart({ data }: { data: DataPoint[] }) {
-  const formatYAxis = (v: number) => `$${(v / 1000).toFixed(0)}k`;
 
   return (
     <ResponsiveContainer width="100%" height={280}>
@@ -50,7 +50,7 @@ export default function RevenueDetailChart({ data }: { data: DataPoint[] }) {
           dy={8}
         />
         <YAxis
-          tickFormatter={formatYAxis}
+          tickFormatter={formatCompactCurrency}
           axisLine={false}
           tickLine={false}
           tick={{ fill: "#78716c", fontSize: 12 }}
