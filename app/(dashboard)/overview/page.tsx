@@ -46,7 +46,7 @@ const stats = [
 export default function OverviewPage() {
   return (
     <div className="flex flex-col gap-8">
-      <WelcomeMessage />
+      <WelcomeMessage name="Sonam" />
 
       {/* Stat cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
