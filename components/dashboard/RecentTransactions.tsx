@@ -1,7 +1,8 @@
 import Link from "next/link";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
-import type { Transaction, TransactionStatus } from "@/types/transaction";
+import type { Transaction } from "@/types/transaction";
+import { transactionStatusVariant } from "@/constants/status";
 
 const transactions: Transaction[] = [
   { id: "1", customer: "Acme Corp",        email: "billing@acme.com",      plan: "Pro",        amount: "$299", status: "paid",    date: "Feb 12, 2026" },
@@ -11,11 +12,6 @@ const transactions: Transaction[] = [
   { id: "5", customer: "Stark Industries",  email: "tony@stark.com",        plan: "Enterprise", amount: "$599", status: "paid",    date: "Feb 10, 2026" },
 ];
 
-const statusVariant: Record<TransactionStatus, "success" | "warning" | "destructive"> = {
-  paid:    "success",
-  pending: "warning",
-  failed:  "destructive",
-};
 
 export default function RecentTransactions() {
   return (
@@ -59,7 +55,7 @@ export default function RecentTransactions() {
                 <td className="px-5 py-3.5 text-muted">{tx.plan}</td>
                 <td className="px-5 py-3.5 font-medium text-foreground">{tx.amount}</td>
                 <td className="px-5 py-3.5">
-                  <Badge label={tx.status} variant={statusVariant[tx.status]} />
+                  <Badge label={tx.status} variant={transactionStatusVariant[tx.status]} />
                 </td>
                 <td className="px-5 py-3.5 text-muted">{tx.date}</td>
               </tr>

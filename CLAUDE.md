@@ -136,6 +136,19 @@ All shared domain types live in `types/`. Never define a shared type inline insi
 - Component-local prop interfaces (e.g. `StatCardProps`) stay in their component file — do not move them to `types/`
 - Always use `import type` when importing from `types/`
 
+### Constants
+
+All app-wide and shared plain data constants live in `constants/`. Never duplicate a constant across component files.
+
+| File | Exports |
+| ---- | ------- |
+| `constants/nav.tsx` | `mainNav`, `bottomNav`, `pageTitles` |
+| `constants/status.ts` | `transactionStatusVariant`, `customerStatusVariant` |
+
+- `constants/` files must contain only plain data — no functions, no logic, no hooks
+- If a file needs JSX (e.g. icon elements), use `.tsx` extension
+- Component-local config (e.g. a filter list used only in one component) stays in that component
+
 ## Development Approach
 
 - Build step by step, piece by piece — one thing at a time

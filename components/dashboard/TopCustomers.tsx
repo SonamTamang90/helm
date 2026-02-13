@@ -2,13 +2,8 @@ import Avatar from "@/components/ui/Avatar";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import Link from "next/link";
-import type { TopCustomer, CustomerStatus } from "@/types/customer";
-
-const statusVariant: Record<CustomerStatus, "success" | "warning" | "destructive"> = {
-  active:  "success",
-  trial:   "warning",
-  churned: "destructive",
-};
+import type { TopCustomer } from "@/types/customer";
+import { customerStatusVariant } from "@/constants/status";
 
 const topCustomers: TopCustomer[] = [
   { name: "Waystar Royco",      email: "logan@waystar.com",     plan: "Enterprise", mrr: "$599", status: "active" },
@@ -60,7 +55,7 @@ export default function TopCustomers() {
             </div>
             <div className="flex flex-col items-end gap-1">
               <p className="text-sm font-medium text-foreground">{c.mrr}</p>
-              <Badge label={c.status} variant={statusVariant[c.status]} />
+              <Badge label={c.status} variant={customerStatusVariant[c.status]} />
             </div>
           </div>
         ))}

@@ -2,14 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Avatar from "@/components/ui/Avatar";
-
-const pageTitles: Record<string, string> = {
-  "/overview":     "Overview",
-  "/revenue":      "Revenue",
-  "/transactions": "Transactions",
-  "/customers":    "Customers",
-  "/settings":     "Settings",
-};
+import { pageTitles } from "@/constants/nav";
 
 interface HeaderProps {
   onToggle: () => void;

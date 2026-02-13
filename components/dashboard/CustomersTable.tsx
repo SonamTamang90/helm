@@ -7,6 +7,7 @@ import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
 import type { Customer, CustomerStatus } from "@/types/customer";
 import type { SortDir } from "@/types/common";
+import { customerStatusVariant } from "@/constants/status";
 
 const allCustomers: Customer[] = [
   { id: "1",  name: "Acme Corp",          email: "billing@acme.com",       plan: "Pro",        mrr: "$299",  ltv: "$3,588",  status: "active",  joined: "Mar 2024" },
@@ -25,12 +26,6 @@ const allCustomers: Customer[] = [
   { id: "14", name: "Soylent Corp",        email: "nate@soylent.com",       plan: "Basic",      mrr: "$99",   ltv: "$396",    status: "churned", joined: "Oct 2024" },
   { id: "15", name: "Buy n Large",         email: "ceo@buynlarge.com",      plan: "Enterprise", mrr: "$599",  ltv: "$8,386",  status: "active",  joined: "Mar 2023" },
 ];
-
-const statusVariant: Record<CustomerStatus, "success" | "warning" | "destructive"> = {
-  active:  "success",
-  trial:   "warning",
-  churned: "destructive",
-};
 
 type Filter = "all" | CustomerStatus;
 const filters: { label: string; value: Filter }[] = [
@@ -226,7 +221,7 @@ export default function CustomersTable() {
                   <td className="px-5 py-3.5 font-medium text-foreground">{customer.mrr}</td>
                   <td className="px-5 py-3.5 text-muted">{customer.ltv}</td>
                   <td className="px-5 py-3.5">
-                    <Badge label={customer.status} variant={statusVariant[customer.status]} />
+                    <Badge label={customer.status} variant={customerStatusVariant[customer.status]} />
                   </td>
                   <td className="px-5 py-3.5 text-muted">{customer.joined}</td>
                 </tr>

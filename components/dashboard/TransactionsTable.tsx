@@ -6,6 +6,7 @@ import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
 import type { Transaction, TransactionStatus } from "@/types/transaction";
 import type { SortDir } from "@/types/common";
+import { transactionStatusVariant } from "@/constants/status";
 
 const allTransactions: Transaction[] = [
   { id: "1",  customer: "Acme Corp",         email: "billing@acme.com",       plan: "Pro",        amount: "$299", status: "paid",    date: "Feb 12, 2026" },
@@ -24,12 +25,6 @@ const allTransactions: Transaction[] = [
   { id: "14", customer: "Soylent Corp",       email: "nate@soylent.com",       plan: "Basic",      amount: "$99",  status: "failed",  date: "Feb 05, 2026" },
   { id: "15", customer: "Buy n Large",        email: "ceo@buynlarge.com",      plan: "Enterprise", amount: "$599", status: "paid",    date: "Feb 05, 2026" },
 ];
-
-const statusVariant: Record<TransactionStatus, "success" | "warning" | "destructive"> = {
-  paid:    "success",
-  pending: "warning",
-  failed:  "destructive",
-};
 
 type Filter = "all" | TransactionStatus;
 const filters: { label: string; value: Filter }[] = [
@@ -209,7 +204,7 @@ export default function TransactionsTable() {
                   <td className="px-5 py-3.5 text-muted">{tx.plan}</td>
                   <td className="px-5 py-3.5 font-medium text-foreground">{tx.amount}</td>
                   <td className="px-5 py-3.5">
-                    <Badge label={tx.status} variant={statusVariant[tx.status]} />
+                    <Badge label={tx.status} variant={transactionStatusVariant[tx.status]} />
                   </td>
                   <td className="px-5 py-3.5 text-muted">{tx.date}</td>
                 </tr>
