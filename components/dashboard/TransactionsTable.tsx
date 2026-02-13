@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
 import type { Transaction, TransactionStatus } from "@/types/transaction";
 import type { SortDir } from "@/types/common";
 import { transactionStatusVariant } from "@/constants/status";
+import { useTableState } from "@/hooks/useTableState";
 
 const allTransactions: Transaction[] = [
   { id: "1",  customer: "Acme Corp",         email: "billing@acme.com",       plan: "Pro",        amount: "$299", status: "paid",    date: "Feb 12, 2026" },
@@ -35,8 +35,6 @@ const filters: { label: string; value: Filter }[] = [
 ];
 
 type SortField = "customer" | "plan" | "amount" | "status" | "date";
-
-const PAGE_SIZE = 10;
 
 function parseDollar(v: string) {
   return parseFloat(v.replace(/[$,]/g, ""));
@@ -91,21 +89,12 @@ function SortIcon({ field, sortField, sortDir }: { field: SortField; sortField: 
 }
 
 export default function TransactionsTable() {
-  const [filter,    setFilter]    = useState<Filter>("all");
-  const [search,    setSearch]    = useState("");
-  const [page,      setPage]      = useState(1);
-  const [sortField, setSortField] = useState<SortField | null>(null);
-  const [sortDir,   setSortDir]   = useState<SortDir>("asc");
-
-  function handleSort(field: SortField) {
-    if (sortField === field) {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    } else {
-      setSortField(field);
-      setSortDir("asc");
-    }
-    setPage(1);
-  }
+  const {
+    filter, search, page, setPage,
+    sortField, sortDir,
+    handleFilterChange, handleSearch, handleSort,
+    paginate,
+  } = useTableState<Filter, SortField>("all");
 
   const filtered = allTransactions.filter((tx) => {
     const matchesFilter = filter === "all" || tx.status === filter;
@@ -115,19 +104,8 @@ export default function TransactionsTable() {
     return matchesFilter && matchesSearch;
   });
 
-  const sorted    = sortField ? sortTransactions(filtered, sortField, sortDir) : filtered;
-  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
-  const paginated  = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-  function handleFilterChange(value: Filter) {
-    setFilter(value);
-    setPage(1);
-  }
-
-  function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
-    setSearch(e.target.value);
-    setPage(1);
-  }
+  const sorted = sortField ? sortTransactions(filtered, sortField, sortDir) : filtered;
+  const { paginated, totalPages } = paginate(sorted);
 
   const thClass = "px-5 py-3 text-left text-xs font-medium text-muted select-none";
 
@@ -217,7 +195,7 @@ export default function TransactionsTable() {
       {/* Pagination */}
       <div className="flex items-center justify-between border-t border-border px-5 py-3.5">
         <p className="text-xs text-muted">
-          Showing {sorted.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, sorted.length)} of {sorted.length}
+          Showing {sorted.length === 0 ? 0 : (page - 1) * 10 + 1}–{Math.min(page * 10, sorted.length)} of {sorted.length}
         </p>
         <div className="flex items-center gap-1">
           <button

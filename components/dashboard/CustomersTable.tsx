@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Avatar from "@/components/ui/Avatar";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
@@ -8,6 +7,7 @@ import Input from "@/components/ui/Input";
 import type { Customer, CustomerStatus } from "@/types/customer";
 import type { SortDir } from "@/types/common";
 import { customerStatusVariant } from "@/constants/status";
+import { useTableState } from "@/hooks/useTableState";
 
 const allCustomers: Customer[] = [
   { id: "1",  name: "Acme Corp",          email: "billing@acme.com",       plan: "Pro",        mrr: "$299",  ltv: "$3,588",  status: "active",  joined: "Mar 2024" },
@@ -36,8 +36,6 @@ const filters: { label: string; value: Filter }[] = [
 ];
 
 type SortField = "name" | "plan" | "mrr" | "ltv" | "status" | "joined";
-
-const PAGE_SIZE = 10;
 
 function parseDollar(v: string) {
   return parseFloat(v.replace(/[$,]/g, ""));
@@ -101,21 +99,12 @@ function SortIcon({ field, sortField, sortDir }: { field: SortField; sortField: 
 }
 
 export default function CustomersTable() {
-  const [filter,    setFilter]    = useState<Filter>("all");
-  const [search,    setSearch]    = useState("");
-  const [page,      setPage]      = useState(1);
-  const [sortField, setSortField] = useState<SortField | null>(null);
-  const [sortDir,   setSortDir]   = useState<SortDir>("asc");
-
-  function handleSort(field: SortField) {
-    if (sortField === field) {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    } else {
-      setSortField(field);
-      setSortDir("asc");
-    }
-    setPage(1);
-  }
+  const {
+    filter, search, page, setPage,
+    sortField, sortDir,
+    handleFilterChange, handleSearch, handleSort,
+    paginate,
+  } = useTableState<Filter, SortField>("all");
 
   const filtered = allCustomers.filter((c) => {
     const matchesFilter = filter === "all" || c.status === filter;
@@ -125,19 +114,8 @@ export default function CustomersTable() {
     return matchesFilter && matchesSearch;
   });
 
-  const sorted     = sortField ? sortCustomers(filtered, sortField, sortDir) : filtered;
-  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
-  const paginated  = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-
-  function handleFilterChange(value: Filter) {
-    setFilter(value);
-    setPage(1);
-  }
-
-  function handleSearch(e: React.ChangeEvent<HTMLInputElement>) {
-    setSearch(e.target.value);
-    setPage(1);
-  }
+  const sorted = sortField ? sortCustomers(filtered, sortField, sortDir) : filtered;
+  const { paginated, totalPages } = paginate(sorted);
 
   const thClass = "px-5 py-3 text-left text-xs font-medium text-muted select-none";
 
@@ -234,7 +212,7 @@ export default function CustomersTable() {
       {/* Pagination */}
       <div className="flex items-center justify-between border-t border-border px-5 py-3.5">
         <p className="text-xs text-muted">
-          Showing {sorted.length === 0 ? 0 : (page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, sorted.length)} of {sorted.length}
+          Showing {sorted.length === 0 ? 0 : (page - 1) * 10 + 1}–{Math.min(page * 10, sorted.length)} of {sorted.length}
         </p>
         <div className="flex items-center gap-1">
           <button

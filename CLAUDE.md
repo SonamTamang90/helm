@@ -122,6 +122,20 @@ helm/
 - `constants/` — no functions, plain data only
 - Never import from `app/` into `components/` — keep the boundary clean
 
+### Hooks
+
+All shared stateful logic lives in `hooks/`. Every file must export a single hook prefixed with `use`.
+
+| File | Hook | Used by |
+| ---- | ---- | ------- |
+| `hooks/useTableState.ts` | `useTableState<TFilter, TSortField>` | `TransactionsTable`, `CustomersTable` |
+
+**`useTableState` API:**
+- Generic over `TFilter` (filter union type) and `TSortField` (sort field union type)
+- Call: `useTableState<Filter, SortField>("all")`
+- Returns: `filter`, `search`, `page`, `setPage`, `sortField`, `sortDir`, `handleFilterChange`, `handleSearch`, `handleSort`, `paginate`
+- `paginate(sortedData)` → `{ paginated, totalPages }` — always use this instead of computing pagination manually
+
 ### Types
 
 All shared domain types live in `types/`. Never define a shared type inline inside a component.
