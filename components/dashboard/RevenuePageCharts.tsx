@@ -8,6 +8,7 @@ import { formatCurrency } from "@/lib/utils";
 
 const RevenueDetailChart = dynamic(() => import("@/components/charts/RevenueDetailChart"), { ssr: false });
 const PlanBreakdownChart  = dynamic(() => import("@/components/charts/PlanBreakdownChart"),  { ssr: false });
+const MrrMovementChart    = dynamic(() => import("@/components/charts/MrrMovementChart"),    { ssr: false });
 
 const allMonths = [
   { month: "Jan", mrr: 38000 },
@@ -63,6 +64,15 @@ export default function RevenuePageCharts() {
         </div>
         <div className="mt-6">
           <RevenueDetailChart data={chartData} />
+        </div>
+      </Card>
+
+      {/* MRR movement */}
+      <Card>
+        <p className="text-sm font-medium text-foreground">MRR Movement</p>
+        <p className="mt-0.5 text-xs text-muted">New, expansion, contraction, and churned MRR per month</p>
+        <div className="mt-6">
+          <MrrMovementChart />
         </div>
       </Card>
 
