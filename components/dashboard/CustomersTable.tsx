@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import Avatar from "@/components/ui/Avatar";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
@@ -7,26 +8,10 @@ import Input from "@/components/ui/Input";
 import type { Customer, CustomerStatus } from "@/types/customer";
 import type { SortDir } from "@/types/common";
 import { customerStatusVariant } from "@/constants/status";
+import { allCustomers } from "@/constants/customers";
 import { useTableState } from "@/hooks/useTableState";
-import { parseCurrency, parseDate, getInitials } from "@/lib/utils";
-
-const allCustomers: Customer[] = [
-  { id: "1",  name: "Acme Corp",          email: "billing@acme.com",       plan: "Pro",        mrr: "$299",  ltv: "$3,588",  status: "active",  joined: "Mar 2024" },
-  { id: "2",  name: "Globex Inc",          email: "finance@globex.com",     plan: "Basic",      mrr: "$99",   ltv: "$1,188",  status: "active",  joined: "Apr 2024" },
-  { id: "3",  name: "Initech",             email: "accounts@initech.com",   plan: "Enterprise", mrr: "$599",  ltv: "$7,188",  status: "trial",   joined: "Jan 2026" },
-  { id: "4",  name: "Umbrella Co",         email: "billing@umbrella.com",   plan: "Pro",        mrr: "$299",  ltv: "$1,196",  status: "churned", joined: "Jun 2024" },
-  { id: "5",  name: "Stark Industries",    email: "tony@stark.com",         plan: "Enterprise", mrr: "$599",  ltv: "$14,376", status: "active",  joined: "Jan 2024" },
-  { id: "6",  name: "Bluth Company",       email: "gob@bluth.com",          plan: "Basic",      mrr: "$99",   ltv: "$594",    status: "active",  joined: "Sep 2024" },
-  { id: "7",  name: "Pied Piper",          email: "richard@piedpiper.com",  plan: "Pro",        mrr: "$299",  ltv: "$897",    status: "trial",   joined: "Feb 2026" },
-  { id: "8",  name: "Hooli",               email: "gavin@hooli.com",        plan: "Enterprise", mrr: "$599",  ltv: "$10,782", status: "active",  joined: "Feb 2024" },
-  { id: "9",  name: "Dunder Mifflin",      email: "michael@dm.com",         plan: "Basic",      mrr: "$99",   ltv: "$693",    status: "churned", joined: "Jul 2024" },
-  { id: "10", name: "Vandelay Industries", email: "art@vandelay.com",       plan: "Pro",        mrr: "$299",  ltv: "$5,382",  status: "active",  joined: "May 2023" },
-  { id: "11", name: "Prestige Worldwide",  email: "boats@prestige.com",     plan: "Basic",      mrr: "$99",   ltv: "$1,485",  status: "active",  joined: "Nov 2023" },
-  { id: "12", name: "Waystar Royco",       email: "logan@waystar.com",      plan: "Enterprise", mrr: "$599",  ltv: "$21,564", status: "active",  joined: "Aug 2022" },
-  { id: "13", name: "Cyberdyne Systems",   email: "miles@cyberdyne.com",    plan: "Pro",        mrr: "$299",  ltv: "$598",    status: "trial",   joined: "Feb 2026" },
-  { id: "14", name: "Soylent Corp",        email: "nate@soylent.com",       plan: "Basic",      mrr: "$99",   ltv: "$396",    status: "churned", joined: "Oct 2024" },
-  { id: "15", name: "Buy n Large",         email: "ceo@buynlarge.com",      plan: "Enterprise", mrr: "$599",  ltv: "$8,386",  status: "active",  joined: "Mar 2023" },
-];
+import { parseCurrency, parseDate, getInitials, exportToCsv } from "@/lib/utils";
+import EmptyState from "@/components/ui/EmptyState";
 
 type Filter = "all" | CustomerStatus;
 const filters: { label: string; value: Filter }[] = [
@@ -83,8 +68,10 @@ function SortIcon({ field, sortField, sortDir }: { field: SortField; sortField: 
 }
 
 export default function CustomersTable() {
+  const router = useRouter();
   const {
     filter, search, page, setPage,
+    pageSize, handlePageSizeChange,
     sortField, sortDir,
     handleFilterChange, handleSearch, handleSort,
     paginate,
@@ -101,7 +88,15 @@ export default function CustomersTable() {
   const sorted = sortField ? sortCustomers(filtered, sortField, sortDir) : filtered;
   const { paginated, totalPages } = paginate(sorted);
 
-  const thClass = "px-5 py-3 text-left text-xs font-medium text-muted select-none";
+  function handleExport() {
+    exportToCsv(
+      "customers.csv",
+      ["Customer", "Email", "Plan", "MRR", "LTV", "Status", "Joined"],
+      sorted.map((c) => [c.name, c.email, c.plan, c.mrr, c.ltv, c.status, c.joined])
+    );
+  }
+
+  const thClass = "sticky top-0 z-10 bg-surface px-5 py-3 text-left text-xs font-medium text-muted select-none";
 
   return (
     <Card className="p-0">
@@ -123,18 +118,32 @@ export default function CustomersTable() {
           ))}
         </div>
 
-        <Input
-          icon={SearchIcon}
-          placeholder="Search customer..."
-          value={search}
-          onChange={handleSearch}
-          className="w-48"
-        />
+        {/* Right controls */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExport}
+            className="flex items-center gap-1.5 rounded border border-border bg-surface px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:bg-surface-raised hover:text-foreground"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Export CSV
+          </button>
+          <Input
+            icon={SearchIcon}
+            placeholder="Search customer..."
+            value={search}
+            onChange={handleSearch}
+            className="w-48"
+          />
+        </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+      <div className="overflow-y-auto overflow-x-auto max-h-[calc(100vh-300px)] scrollbar-hide">
+      <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border">
               <th className={`${thClass} cursor-pointer hover:text-foreground`} onClick={() => handleSort("name")}>
@@ -160,15 +169,19 @@ export default function CustomersTable() {
           <tbody>
             {paginated.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-5 py-10 text-center text-sm text-muted">
-                  No customers found.
+                <td colSpan={6}>
+                  <EmptyState
+                    title="No customers found"
+                    description="Try adjusting your search or filters."
+                  />
                 </td>
               </tr>
             ) : (
               paginated.map((customer, i) => (
                 <tr
                   key={customer.id}
-                  className={`transition-colors hover:bg-surface-raised/40 ${i !== paginated.length - 1 ? "border-b border-border" : ""}`}
+                  onClick={() => router.push(`/customers/${customer.id}`)}
+                  className={`cursor-pointer transition-colors hover:bg-surface-raised/40 ${i !== paginated.length - 1 ? "border-b border-border" : ""}`}
                 >
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3">
@@ -190,14 +203,25 @@ export default function CustomersTable() {
               ))
             )}
           </tbody>
-        </table>
+      </table>
       </div>
 
       {/* Pagination */}
       <div className="flex items-center justify-between border-t border-border px-5 py-3.5">
-        <p className="text-xs text-muted">
-          Showing {sorted.length === 0 ? 0 : (page - 1) * 10 + 1}–{Math.min(page * 10, sorted.length)} of {sorted.length}
-        </p>
+        <div className="flex items-center gap-3">
+          <p className="text-xs text-muted">
+            Showing {sorted.length === 0 ? 0 : (page - 1) * pageSize + 1}–{Math.min(page * pageSize, sorted.length)} of {sorted.length}
+          </p>
+          <select
+            value={pageSize}
+            onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+            className="h-7 rounded border border-border bg-surface px-2 text-xs text-muted focus:outline-none focus:ring-1 focus:ring-border"
+          >
+            {[10, 25, 50].map((n) => (
+              <option key={n} value={n}>{n} / page</option>
+            ))}
+          </select>
+        </div>
         <div className="flex items-center gap-1">
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -210,7 +234,7 @@ export default function CustomersTable() {
             <button
               key={p}
               onClick={() => setPage(p)}
-              className={`min-w-[28px] rounded px-2 py-1.5 text-xs font-medium transition-colors ${
+              className={`min-w-7 rounded px-2 py-1.5 text-xs font-medium transition-colors ${
                 page === p
                   ? "bg-surface-raised text-foreground"
                   : "text-muted hover:bg-surface-raised hover:text-foreground"

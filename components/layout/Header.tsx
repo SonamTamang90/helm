@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Avatar from "@/components/ui/Avatar";
+import DateRangePicker from "@/components/ui/DateRangePicker";
 import { pageTitles } from "@/constants/nav";
 
 interface HeaderProps {
@@ -12,6 +13,7 @@ interface HeaderProps {
 export default function Header({ onToggle, collapsed }: HeaderProps) {
   const pathname = usePathname();
   const title = pageTitles[pathname] ?? "";
+  const showDateRange = pathname !== "/settings";
 
   return (
     <header className="flex h-14 shrink-0 items-center border-b border-border bg-surface px-4">
@@ -45,6 +47,8 @@ export default function Header({ onToggle, collapsed }: HeaderProps) {
       )}
 
       <div className="ml-auto flex items-center gap-3">
+        {showDateRange && <DateRangePicker />}
+
         <button
           aria-label="Notifications"
           className="flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-raised hover:text-foreground"

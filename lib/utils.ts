@@ -42,3 +42,34 @@ export function getInitials(name: string): string {
     .join("")
     .toUpperCase();
 }
+
+/**
+ * Returns a cutoff Date for the given Period, relative to today.
+ * Example: "3M" → Date 3 months ago
+ */
+export function getPeriodCutoff(period: "3M" | "6M" | "12M"): Date {
+  const months = { "3M": 3, "6M": 6, "12M": 12 };
+  const cutoff = new Date();
+  cutoff.setMonth(cutoff.getMonth() - months[period]);
+  return cutoff;
+}
+
+/**
+ * Triggers a CSV file download in the browser.
+ * Exports all rows — use the filtered/sorted dataset, not paginated.
+ */
+export function exportToCsv(filename: string, headers: string[], rows: string[][]): void {
+  const lines = [
+    headers.join(","),
+    ...rows.map((row) =>
+      row.map((cell) => `"${cell.replace(/"/g, '""')}"`).join(",")
+    ),
+  ];
+  const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}

@@ -3,6 +3,10 @@
 import { useState } from "react";
 import Header from "@/components/layout/Header";
 import Sidebar from "@/components/layout/Sidebar";
+import CommandPalette from "@/components/dashboard/CommandPalette";
+import { DateRangeProvider } from "@/context/DateRangeContext";
+import { ToastProvider } from "@/context/ToastContext";
+import Toaster from "@/components/ui/Toaster";
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const [collapsed,   setCollapsed]   = useState(false);
@@ -17,25 +21,31 @@ export default function DashboardShell({ children }: { children: React.ReactNode
   }
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      {/* Mobile backdrop */}
-      {mobileOpen && (
-        <div
-          className="fixed inset-0 z-20 bg-black/50 lg:hidden"
-          onClick={() => setMobileOpen(false)}
-        />
-      )}
+    <DateRangeProvider>
+      <ToastProvider>
+        <div className="flex h-screen overflow-hidden">
+          {/* Mobile backdrop */}
+          {mobileOpen && (
+            <div
+              className="fixed inset-0 z-20 bg-black/50 lg:hidden"
+              onClick={() => setMobileOpen(false)}
+            />
+          )}
 
-      <Sidebar
-        collapsed={collapsed}
-        mobileOpen={mobileOpen}
-        onClose={() => setMobileOpen(false)}
-      />
+          <Sidebar
+            collapsed={collapsed}
+            mobileOpen={mobileOpen}
+            onClose={() => setMobileOpen(false)}
+          />
 
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <Header onToggle={handleToggle} collapsed={collapsed} />
-        <main className="flex-1 overflow-auto bg-surface p-6">{children}</main>
-      </div>
-    </div>
+          <div className="flex flex-1 flex-col overflow-hidden">
+            <Header onToggle={handleToggle} collapsed={collapsed} />
+            <main className="flex-1 overflow-auto bg-surface p-6">{children}</main>
+          </div>
+        </div>
+        <Toaster />
+        <CommandPalette />
+      </ToastProvider>
+    </DateRangeProvider>
   );
 }

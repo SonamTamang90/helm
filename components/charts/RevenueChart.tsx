@@ -9,22 +9,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import type { DataPoint } from "@/types/common";
 import { formatCompactCurrency, formatCurrency } from "@/lib/utils";
-
-const data = [
-  { month: "Jan", mrr: 38000 },
-  { month: "Feb", mrr: 40000 },
-  { month: "Mar", mrr: 39500 },
-  { month: "Apr", mrr: 42000 },
-  { month: "May", mrr: 44000 },
-  { month: "Jun", mrr: 43500 },
-  { month: "Jul", mrr: 45000 },
-  { month: "Aug", mrr: 46500 },
-  { month: "Sep", mrr: 47000 },
-  { month: "Oct", mrr: 46000 },
-  { month: "Nov", mrr: 47500 },
-  { month: "Dec", mrr: 48200 },
-];
 
 interface TooltipPayload {
   value: number;
@@ -48,7 +34,7 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
   );
 }
 
-export default function RevenueChart() {
+export default function RevenueChart({ data }: { data: DataPoint[] }) {
   return (
     <ResponsiveContainer width="100%" height={240}>
       <AreaChart data={data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>

@@ -6,6 +6,7 @@ import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Label from "@/components/ui/Label";
 import Switch from "@/components/ui/Switch";
+import { useToast } from "@/context/ToastContext";
 
 type Tab = "profile" | "account" | "notifications" | "billing";
 
@@ -18,6 +19,7 @@ const tabs: { label: string; value: Tab }[] = [
 
 /* ─── Profile ─────────────────────────────────────────────── */
 function ProfileSection() {
+  const { addToast } = useToast();
   const [firstName, setFirstName] = useState("Sonam");
   const [lastName,  setLastName]  = useState("Tamang");
   const [email,     setEmail]     = useState("sonam@helm.so");
@@ -62,7 +64,7 @@ function ProfileSection() {
       </div>
 
       <div className="flex justify-end">
-        <Button variant="primary">Save changes</Button>
+        <Button variant="primary" onClick={() => addToast("Profile saved.")}>Save changes</Button>
       </div>
     </div>
   );
@@ -70,6 +72,7 @@ function ProfileSection() {
 
 /* ─── Account ─────────────────────────────────────────────── */
 function AccountSection() {
+  const { addToast } = useToast();
   const [company,  setCompany]  = useState("Helm Inc.");
   const [timezone, setTimezone] = useState("UTC");
   const [currency, setCurrency] = useState("USD");
@@ -117,7 +120,7 @@ function AccountSection() {
       </div>
 
       <div className="flex justify-end">
-        <Button variant="primary">Save changes</Button>
+        <Button variant="primary" onClick={() => addToast("Account settings saved.")}>Save changes</Button>
       </div>
     </div>
   );
@@ -139,6 +142,7 @@ const notificationItems: NotificationItem[] = [
 ];
 
 function NotificationsSection() {
+  const { addToast } = useToast();
   const [enabled, setEnabled] = useState<Record<string, boolean>>({
     receipts:    true,
     failures:    true,
@@ -173,7 +177,7 @@ function NotificationsSection() {
       </div>
 
       <div className="flex justify-end">
-        <Button variant="primary">Save changes</Button>
+        <Button variant="primary" onClick={() => addToast("Notification preferences saved.")}>Save changes</Button>
       </div>
     </div>
   );

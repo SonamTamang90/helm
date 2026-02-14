@@ -1,31 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import Input from "@/components/ui/Input";
+import TransactionDetailModal from "@/components/dashboard/TransactionDetailModal";
 import type { Transaction, TransactionStatus } from "@/types/transaction";
 import type { SortDir } from "@/types/common";
 import { transactionStatusVariant } from "@/constants/status";
+import { allTransactions } from "@/constants/transactions";
 import { useTableState } from "@/hooks/useTableState";
-import { parseCurrency, parseDate } from "@/lib/utils";
-
-const allTransactions: Transaction[] = [
-  { id: "1",  customer: "Acme Corp",         email: "billing@acme.com",       plan: "Pro",        amount: "$299", status: "paid",    date: "Feb 12, 2026" },
-  { id: "2",  customer: "Globex Inc",         email: "finance@globex.com",     plan: "Basic",      amount: "$99",  status: "paid",    date: "Feb 11, 2026" },
-  { id: "3",  customer: "Initech",            email: "accounts@initech.com",   plan: "Enterprise", amount: "$599", status: "pending", date: "Feb 11, 2026" },
-  { id: "4",  customer: "Umbrella Co",        email: "billing@umbrella.com",   plan: "Pro",        amount: "$299", status: "failed",  date: "Feb 10, 2026" },
-  { id: "5",  customer: "Stark Industries",   email: "tony@stark.com",         plan: "Enterprise", amount: "$599", status: "paid",    date: "Feb 10, 2026" },
-  { id: "6",  customer: "Bluth Company",      email: "gob@bluth.com",          plan: "Basic",      amount: "$99",  status: "paid",    date: "Feb 09, 2026" },
-  { id: "7",  customer: "Pied Piper",         email: "richard@piedpiper.com",  plan: "Pro",        amount: "$299", status: "pending", date: "Feb 09, 2026" },
-  { id: "8",  customer: "Hooli",              email: "gavin@hooli.com",        plan: "Enterprise", amount: "$599", status: "paid",    date: "Feb 08, 2026" },
-  { id: "9",  customer: "Dunder Mifflin",     email: "michael@dm.com",         plan: "Basic",      amount: "$99",  status: "failed",  date: "Feb 08, 2026" },
-  { id: "10", customer: "Vandelay Industries",email: "art@vandelay.com",       plan: "Pro",        amount: "$299", status: "paid",    date: "Feb 07, 2026" },
-  { id: "11", customer: "Prestige Worldwide", email: "boats@prestige.com",     plan: "Basic",      amount: "$99",  status: "paid",    date: "Feb 07, 2026" },
-  { id: "12", customer: "Waystar Royco",      email: "logan@waystar.com",      plan: "Enterprise", amount: "$599", status: "paid",    date: "Feb 06, 2026" },
-  { id: "13", customer: "Cyberdyne Systems",  email: "miles@cyberdyne.com",    plan: "Pro",        amount: "$299", status: "pending", date: "Feb 06, 2026" },
-  { id: "14", customer: "Soylent Corp",       email: "nate@soylent.com",       plan: "Basic",      amount: "$99",  status: "failed",  date: "Feb 05, 2026" },
-  { id: "15", customer: "Buy n Large",        email: "ceo@buynlarge.com",      plan: "Enterprise", amount: "$599", status: "paid",    date: "Feb 05, 2026" },
-];
+import { parseCurrency, parseDate, getPeriodCutoff, exportToCsv } from "@/lib/utils";
+import { useDateRange } from "@/context/DateRangeContext";
+import EmptyState from "@/components/ui/EmptyState";
 
 type Filter = "all" | TransactionStatus;
 const filters: { label: string; value: Filter }[] = [
@@ -82,27 +69,41 @@ function SortIcon({ field, sortField, sortDir }: { field: SortField; sortField: 
 }
 
 export default function TransactionsTable() {
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
+  const { period } = useDateRange();
   const {
     filter, search, page, setPage,
+    pageSize, handlePageSizeChange,
     sortField, sortDir,
     handleFilterChange, handleSearch, handleSort,
     paginate,
   } = useTableState<Filter, SortField>("all");
 
+  const cutoff = getPeriodCutoff(period);
   const filtered = allTransactions.filter((tx) => {
+    const inPeriod    = new Date(tx.date) >= cutoff;
     const matchesFilter = filter === "all" || tx.status === filter;
     const matchesSearch =
       tx.customer.toLowerCase().includes(search.toLowerCase()) ||
       tx.email.toLowerCase().includes(search.toLowerCase());
-    return matchesFilter && matchesSearch;
+    return inPeriod && matchesFilter && matchesSearch;
   });
 
   const sorted = sortField ? sortTransactions(filtered, sortField, sortDir) : filtered;
   const { paginated, totalPages } = paginate(sorted);
 
-  const thClass = "px-5 py-3 text-left text-xs font-medium text-muted select-none";
+  function handleExport() {
+    exportToCsv(
+      "transactions.csv",
+      ["Customer", "Email", "Plan", "Amount", "Status", "Date"],
+      sorted.map((tx) => [tx.customer, tx.email, tx.plan, tx.amount, tx.status, tx.date])
+    );
+  }
+
+  const thClass = "sticky top-0 z-10 bg-surface px-5 py-3 text-left text-xs font-medium text-muted select-none";
 
   return (
+    <>
     <Card className="p-0">
       {/* Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-4">
@@ -123,19 +124,32 @@ export default function TransactionsTable() {
           ))}
         </div>
 
-        {/* Search */}
-        <Input
-          icon={SearchIcon}
-          placeholder="Search customer..."
-          value={search}
-          onChange={handleSearch}
-          className="w-48"
-        />
+        {/* Right controls */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExport}
+            className="flex items-center gap-1.5 rounded border border-border bg-surface px-3 py-1.5 text-xs font-medium text-muted transition-colors hover:bg-surface-raised hover:text-foreground"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+            Export CSV
+          </button>
+          <Input
+            icon={SearchIcon}
+            placeholder="Search customer..."
+            value={search}
+            onChange={handleSearch}
+            className="w-48"
+          />
+        </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+      <div className="overflow-y-auto overflow-x-auto max-h-[calc(100vh-300px)] scrollbar-hide">
+      <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border">
               <th className={`${thClass} cursor-pointer hover:text-foreground`} onClick={() => handleSort("customer")}>
@@ -158,15 +172,19 @@ export default function TransactionsTable() {
           <tbody>
             {paginated.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-5 py-10 text-center text-sm text-muted">
-                  No transactions found.
+                <td colSpan={5}>
+                  <EmptyState
+                    title="No transactions found"
+                    description="Try adjusting your search, filters, or date range."
+                  />
                 </td>
               </tr>
             ) : (
               paginated.map((tx, i) => (
                 <tr
                   key={tx.id}
-                  className={`transition-colors hover:bg-surface-raised/40 ${i !== paginated.length - 1 ? "border-b border-border" : ""}`}
+                  onClick={() => setSelectedTx(tx)}
+                  className={`cursor-pointer transition-colors hover:bg-surface-raised/40 ${i !== paginated.length - 1 ? "border-b border-border" : ""}`}
                 >
                   <td className="px-5 py-3.5">
                     <p className="font-medium text-foreground">{tx.customer}</p>
@@ -182,14 +200,25 @@ export default function TransactionsTable() {
               ))
             )}
           </tbody>
-        </table>
+      </table>
       </div>
 
       {/* Pagination */}
       <div className="flex items-center justify-between border-t border-border px-5 py-3.5">
-        <p className="text-xs text-muted">
-          Showing {sorted.length === 0 ? 0 : (page - 1) * 10 + 1}–{Math.min(page * 10, sorted.length)} of {sorted.length}
-        </p>
+        <div className="flex items-center gap-3">
+          <p className="text-xs text-muted">
+            Showing {sorted.length === 0 ? 0 : (page - 1) * pageSize + 1}–{Math.min(page * pageSize, sorted.length)} of {sorted.length}
+          </p>
+          <select
+            value={pageSize}
+            onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+            className="h-7 rounded border border-border bg-surface px-2 text-xs text-muted focus:outline-none focus:ring-1 focus:ring-border"
+          >
+            {[10, 25, 50].map((n) => (
+              <option key={n} value={n}>{n} / page</option>
+            ))}
+          </select>
+        </div>
         <div className="flex items-center gap-1">
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -202,7 +231,7 @@ export default function TransactionsTable() {
             <button
               key={p}
               onClick={() => setPage(p)}
-              className={`min-w-[28px] rounded px-2 py-1.5 text-xs font-medium transition-colors ${
+              className={`min-w-7 rounded px-2 py-1.5 text-xs font-medium transition-colors ${
                 page === p
                   ? "bg-surface-raised text-foreground"
                   : "text-muted hover:bg-surface-raised hover:text-foreground"
@@ -221,5 +250,11 @@ export default function TransactionsTable() {
         </div>
       </div>
     </Card>
+
+    <TransactionDetailModal
+      transaction={selectedTx}
+      onClose={() => setSelectedTx(null)}
+    />
+    </>
   );
 }

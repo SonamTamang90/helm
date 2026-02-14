@@ -1,9 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useState } from "react";
 import Card from "@/components/ui/Card";
-import type { Period } from "@/types/common";
+import { useDateRange } from "@/context/DateRangeContext";
 import { formatCurrency } from "@/lib/utils";
 
 const RevenueDetailChart = dynamic(() => import("@/components/charts/RevenueDetailChart"), { ssr: false });
@@ -25,7 +24,22 @@ const allMonths = [
   { month: "Dec", mrr: 48200 },
 ];
 
-const periodSlice: Record<Period, number> = { "3M": 3, "6M": 6, "12M": 12 };
+const allMovement = [
+  { month: "Jan", new: 2800, expansion: 700,  contraction: -300, churned: -800  },
+  { month: "Feb", new: 3200, expansion: 600,  contraction: -200, churned: -1600 },
+  { month: "Mar", new: 1800, expansion: 500,  contraction: -600, churned: -2200 },
+  { month: "Apr", new: 3600, expansion: 900,  contraction: -400, churned: -1600 },
+  { month: "May", new: 2800, expansion: 1000, contraction: -400, churned: -1400 },
+  { month: "Jun", new: 2200, expansion: 700,  contraction: -500, churned: -2900 },
+  { month: "Jul", new: 2800, expansion: 900,  contraction: -300, churned: -1900 },
+  { month: "Aug", new: 2600, expansion: 900,  contraction: -400, churned: -1600 },
+  { month: "Sep", new: 2400, expansion: 700,  contraction: -500, churned: -2100 },
+  { month: "Oct", new: 1800, expansion: 600,  contraction: -600, churned: -2800 },
+  { month: "Nov", new: 3200, expansion: 800,  contraction: -200, churned: -2300 },
+  { month: "Dec", new: 2400, expansion: 900,  contraction: -400, churned: -2200 },
+];
+
+const periodSlice = { "3M": 3, "6M": 6, "12M": 12 } as const;
 
 const monthlyBreakdown = allMonths.map((m, i, arr) => {
   const prev = arr[i - 1];
@@ -34,33 +48,19 @@ const monthlyBreakdown = allMonths.map((m, i, arr) => {
 });
 
 export default function RevenuePageCharts() {
-  const [period, setPeriod] = useState<Period>("12M");
-  const chartData = allMonths.slice(-periodSlice[period]);
+  const { period } = useDateRange();
+  const sliceCount = periodSlice[period];
+  const chartData    = allMonths.slice(-sliceCount);
+  const movementData = allMovement.slice(-sliceCount);
+  const breakdownData = monthlyBreakdown.slice(-sliceCount);
 
   return (
     <div className="flex flex-col gap-4">
       {/* Revenue trend */}
       <Card>
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-sm font-medium text-foreground">Revenue Trend</p>
-            <p className="mt-0.5 text-xs text-muted">Monthly recurring revenue</p>
-          </div>
-          <div className="flex items-center gap-1">
-            {(["3M", "6M", "12M"] as Period[]).map((p) => (
-              <button
-                key={p}
-                onClick={() => setPeriod(p)}
-                className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
-                  period === p
-                    ? "bg-surface-raised text-foreground"
-                    : "text-muted hover:text-foreground"
-                }`}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
+        <div>
+          <p className="text-sm font-medium text-foreground">Revenue Trend</p>
+          <p className="mt-0.5 text-xs text-muted">Monthly recurring revenue — last {period}</p>
         </div>
         <div className="mt-6">
           <RevenueDetailChart data={chartData} />
@@ -72,7 +72,7 @@ export default function RevenuePageCharts() {
         <p className="text-sm font-medium text-foreground">MRR Movement</p>
         <p className="mt-0.5 text-xs text-muted">New, expansion, contraction, and churned MRR per month</p>
         <div className="mt-6">
-          <MrrMovementChart />
+          <MrrMovementChart data={movementData} />
         </div>
       </Card>
 
@@ -103,10 +103,10 @@ export default function RevenuePageCharts() {
                 </tr>
               </thead>
               <tbody>
-                {[...monthlyBreakdown].reverse().map((row, i) => (
+                {[...breakdownData].reverse().map((row, i) => (
                   <tr
                     key={row.month}
-                    className={`transition-colors hover:bg-surface-raised/40 ${i !== monthlyBreakdown.length - 1 ? "border-b border-border" : ""}`}
+                    className={`transition-colors hover:bg-surface-raised/40 ${i !== breakdownData.length - 1 ? "border-b border-border" : ""}`}
                   >
                     <td className="px-5 py-3 font-medium text-foreground">{row.month}</td>
                     <td className="px-5 py-3 text-foreground">{formatCurrency(row.mrr)}</td>
