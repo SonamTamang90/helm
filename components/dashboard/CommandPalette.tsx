@@ -16,20 +16,31 @@ interface CommandItem {
   group: "navigation" | "customers";
 }
 
-export default function CommandPalette() {
-  const [open, setOpen]               = useState(false);
+interface CommandPaletteProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+export default function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const [query, setQuery]             = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const router   = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Refs for stale-closure-safe access inside event listener callbacks
-  const openRef   = useRef(false);
-  const activeRef = useRef(0);
-  const itemsRef  = useRef<CommandItem[]>([]);
+  const openRef          = useRef(false);
+  const activeRef        = useRef(0);
+  const itemsRef         = useRef<CommandItem[]>([]);
+  const onOpenChangeRef  = useRef(onOpenChange);
 
-  useEffect(() => { openRef.current   = open;        }, [open]);
-  useEffect(() => { activeRef.current = activeIndex; }, [activeIndex]);
+  useEffect(() => { openRef.current         = open;         }, [open]);
+  useEffect(() => { activeRef.current       = activeIndex;  }, [activeIndex]);
+  useEffect(() => { onOpenChangeRef.current = onOpenChange; }, [onOpenChange]);
+
+  // Reset internal state when palette closes
+  useEffect(() => {
+    if (!open) { setQuery(""); setActiveIndex(0); }
+  }, [open]);
 
   const q = query.toLowerCase().trim();
 
@@ -79,27 +90,23 @@ export default function CommandPalette() {
     if (open) requestAnimationFrame(() => inputRef.current?.focus());
   }, [open]);
 
-  // Global Cmd+K / Ctrl+K — setState calls are inside the event callback, not the effect body
+  // Global Cmd+K / Ctrl+K — safe: reads open and onOpenChange via refs
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
       if (!((e.metaKey || e.ctrlKey) && e.key === "k")) return;
       e.preventDefault();
-      if (openRef.current) {
-        setOpen(false); setQuery(""); setActiveIndex(0);
-      } else {
-        setOpen(true);
-      }
+      onOpenChangeRef.current(!openRef.current);
     }
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, []); // safe: reads open via ref
+  }, []);
 
   // Keyboard navigation — setState calls are inside the event callback
   useEffect(() => {
     if (!open) return;
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") {
-        setOpen(false); setQuery(""); setActiveIndex(0);
+        onOpenChangeRef.current(false);
       } else if (e.key === "ArrowDown") {
         e.preventDefault();
         setActiveIndex((i) => Math.min(i + 1, itemsRef.current.length - 1));
@@ -108,7 +115,7 @@ export default function CommandPalette() {
         setActiveIndex((i) => Math.max(i - 1, 0));
       } else if (e.key === "Enter") {
         const item = itemsRef.current[activeRef.current];
-        if (item) { router.push(item.href); setOpen(false); setQuery(""); setActiveIndex(0); }
+        if (item) { router.push(item.href); onOpenChangeRef.current(false); }
       }
     }
     document.addEventListener("keydown", onKey);
@@ -117,11 +124,11 @@ export default function CommandPalette() {
 
   function go(href: string) {
     router.push(href);
-    setOpen(false); setQuery(""); setActiveIndex(0);
+    onOpenChange(false);
   }
 
   function dismiss() {
-    setOpen(false); setQuery(""); setActiveIndex(0);
+    onOpenChange(false);
   }
 
   if (!open) return null;

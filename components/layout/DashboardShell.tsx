@@ -9,8 +9,9 @@ import { ToastProvider } from "@/context/ToastContext";
 import Toaster from "@/components/ui/Toaster";
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
-  const [collapsed,   setCollapsed]   = useState(false);
-  const [mobileOpen,  setMobileOpen]  = useState(false);
+  const [collapsed,    setCollapsed]    = useState(false);
+  const [mobileOpen,   setMobileOpen]   = useState(false);
+  const [searchOpen,   setSearchOpen]   = useState(false);
 
   function handleToggle() {
     if (window.innerWidth >= 1024) {
@@ -39,12 +40,16 @@ export default function DashboardShell({ children }: { children: React.ReactNode
           />
 
           <div className="flex flex-1 flex-col overflow-hidden">
-            <Header onToggle={handleToggle} collapsed={collapsed} />
+            <Header
+              onToggle={handleToggle}
+              collapsed={collapsed}
+              onOpenSearch={() => setSearchOpen(true)}
+            />
             <main className="flex-1 overflow-auto bg-surface p-6">{children}</main>
           </div>
         </div>
         <Toaster />
-        <CommandPalette />
+        <CommandPalette open={searchOpen} onOpenChange={setSearchOpen} />
       </ToastProvider>
     </DateRangeProvider>
   );

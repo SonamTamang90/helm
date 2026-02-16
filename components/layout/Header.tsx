@@ -3,14 +3,16 @@
 import { usePathname } from "next/navigation";
 import Avatar from "@/components/ui/Avatar";
 import DateRangePicker from "@/components/ui/DateRangePicker";
+import SearchTrigger from "@/components/layout/SearchTrigger";
 import { pageTitles } from "@/constants/nav";
 
 interface HeaderProps {
   onToggle: () => void;
   collapsed: boolean;
+  onOpenSearch: () => void;
 }
 
-export default function Header({ onToggle, collapsed }: HeaderProps) {
+export default function Header({ onToggle, collapsed, onOpenSearch }: HeaderProps) {
   const pathname = usePathname();
   const title = pageTitles[pathname] ?? "";
   const showDateRange = pathname !== "/settings";
@@ -47,6 +49,7 @@ export default function Header({ onToggle, collapsed }: HeaderProps) {
       )}
 
       <div className="ml-auto flex items-center gap-3">
+        <SearchTrigger onClick={onOpenSearch} />
         {showDateRange && <DateRangePicker />}
 
         <button
