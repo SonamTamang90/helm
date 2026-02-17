@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const customer = allCustomers.find((c) => c.id === id);
   return {
-    title: customer ? `${customer.name} | Helm` : "Customer | Helm",
+    title: customer ? customer.name : "Customer",
     description: customer ? `Account details and transaction history for ${customer.name}.` : undefined,
   };
 }

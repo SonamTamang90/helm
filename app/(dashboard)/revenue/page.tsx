@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import RevenuePageCharts from "@/components/dashboard/RevenuePageCharts";
 
 export const metadata: Metadata = {
-  title: "Revenue | Helm",
+  title: "Revenue",
   description: "Revenue trends, MRR growth, ARPU, and plan breakdown.",
 };
 import StatCard from "@/components/dashboard/StatCard";

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import TransactionsTable from "@/components/dashboard/TransactionsTable";
 
 export const metadata: Metadata = {
-  title: "Transactions | Helm",
+  title: "Transactions",
   description: "Full record of all billing activity.",
 };
 

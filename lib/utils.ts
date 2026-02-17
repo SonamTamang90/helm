@@ -14,7 +14,7 @@ export function formatCompactCurrency(value: number): string {
  * Example: 48200 → "$48,200"
  */
 export function formatCurrency(value: number): string {
-  return `$${value.toLocaleString()}`;
+  return `$${value.toLocaleString("en-US")}`;
 }
 
 /**

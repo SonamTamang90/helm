@@ -11,10 +11,3 @@ export interface Customer {
   joined: string;
 }
 
-export interface TopCustomer {
-  name: string;
-  email: string;
-  plan: string;
-  mrr: string;
-  status: CustomerStatus;
-}

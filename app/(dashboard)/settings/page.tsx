@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import SettingsTabs from "@/components/dashboard/SettingsTabs";
 
 export const metadata: Metadata = {
-  title: "Settings | Helm",
+  title: "Settings",
   description: "Manage your account and preferences.",
 };
 

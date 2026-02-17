@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import CustomersTable from "@/components/dashboard/CustomersTable";
 
 export const metadata: Metadata = {
-  title: "Customers | Helm",
+  title: "Customers",
   description: "Manage and monitor your customer base.",
 };
 

@@ -8,8 +8,11 @@ const geist = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Helm",
-  description: "Dark SaaS dashboard",
+  title: {
+    default:  "Helm",
+    template: "%s | Helm",
+  },
+  description: "Revenue and finance dashboard for tracking MRR, ARR, churn, and transactions.",
 };
 
 export default function RootLayout({

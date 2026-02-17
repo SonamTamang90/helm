@@ -2,17 +2,13 @@ import Avatar from "@/components/ui/Avatar";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
 import Link from "next/link";
-import type { TopCustomer } from "@/types/customer";
 import { customerStatusVariant } from "@/constants/status";
-import { getInitials } from "@/lib/utils";
+import { allCustomers } from "@/constants/customers";
+import { getInitials, parseCurrency } from "@/lib/utils";
 
-const topCustomers: TopCustomer[] = [
-  { name: "Waystar Royco",      email: "logan@waystar.com",     plan: "Enterprise", mrr: "$599", status: "active" },
-  { name: "Stark Industries",   email: "tony@stark.com",        plan: "Enterprise", mrr: "$599", status: "active" },
-  { name: "Hooli",              email: "gavin@hooli.com",       plan: "Enterprise", mrr: "$599", status: "active" },
-  { name: "Buy n Large",        email: "ceo@buynlarge.com",     plan: "Enterprise", mrr: "$599", status: "active" },
-  { name: "Acme Corp",          email: "billing@acme.com",      plan: "Pro",        mrr: "$299", status: "active" },
-];
+const topCustomers = [...allCustomers]
+  .sort((a, b) => parseCurrency(b.mrr) - parseCurrency(a.mrr))
+  .slice(0, 5);
 
 export default function TopCustomers() {
   return (

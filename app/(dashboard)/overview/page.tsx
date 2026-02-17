@@ -7,7 +7,7 @@ import WelcomeMessage from "@/components/dashboard/WelcomeMessage";
 import { currentUser } from "@/constants/user";
 
 export const metadata: Metadata = {
-  title: "Overview | Helm",
+  title: "Overview",
   description: "MRR, ARR, churn, and active customers at a glance.",
 };
 
