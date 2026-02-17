@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Avatar from "@/components/ui/Avatar";
@@ -12,6 +13,15 @@ import { getInitials } from "@/lib/utils";
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const customer = allCustomers.find((c) => c.id === id);
+  return {
+    title: customer ? `${customer.name} | Helm` : "Customer | Helm",
+    description: customer ? `Account details and transaction history for ${customer.name}.` : undefined,
+  };
+}
 
 export default async function CustomerDetailPage({ params }: Props) {
   const { id } = await params;

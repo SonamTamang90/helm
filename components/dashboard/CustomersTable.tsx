@@ -10,7 +10,7 @@ import type { SortDir } from "@/types/common";
 import { customerStatusVariant } from "@/constants/status";
 import { allCustomers } from "@/constants/customers";
 import { useTableState } from "@/hooks/useTableState";
-import { parseCurrency, parseDate, getInitials, exportToCsv } from "@/lib/utils";
+import { parseCurrency, parseDate, getInitials, exportToCsv, getPaginationRange } from "@/lib/utils";
 import EmptyState from "@/components/ui/EmptyState";
 
 type Filter = "all" | CustomerStatus;
@@ -230,19 +230,23 @@ export default function CustomersTable() {
           >
             ← Prev
           </button>
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-            <button
-              key={p}
-              onClick={() => setPage(p)}
-              className={`min-w-7 rounded px-2 py-1.5 text-xs font-medium transition-colors ${
-                page === p
-                  ? "bg-surface-raised text-foreground"
-                  : "text-muted hover:bg-surface-raised hover:text-foreground"
-              }`}
-            >
-              {p}
-            </button>
-          ))}
+          {getPaginationRange(page, totalPages).map((p, i) =>
+            p === null ? (
+              <span key={`ellipsis-${i}`} className="px-1 text-xs text-muted select-none">…</span>
+            ) : (
+              <button
+                key={p}
+                onClick={() => setPage(p)}
+                className={`min-w-7 rounded px-2 py-1.5 text-xs font-medium transition-colors ${
+                  page === p
+                    ? "bg-surface-raised text-foreground"
+                    : "text-muted hover:bg-surface-raised hover:text-foreground"
+                }`}
+              >
+                {p}
+              </button>
+            )
+          )}
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}

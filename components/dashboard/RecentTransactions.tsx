@@ -1,16 +1,13 @@
 import Link from "next/link";
 import Badge from "@/components/ui/Badge";
 import Card from "@/components/ui/Card";
-import type { Transaction } from "@/types/transaction";
 import { transactionStatusVariant } from "@/constants/status";
+import { allTransactions } from "@/constants/transactions";
+import { parseDate } from "@/lib/utils";
 
-const transactions: Transaction[] = [
-  { id: "1", customer: "Acme Corp",        email: "billing@acme.com",      plan: "Pro",        amount: "$299", status: "paid",    date: "Feb 12, 2026" },
-  { id: "2", customer: "Globex Inc",        email: "finance@globex.com",    plan: "Basic",      amount: "$99",  status: "paid",    date: "Feb 11, 2026" },
-  { id: "3", customer: "Initech",           email: "accounts@initech.com",  plan: "Enterprise", amount: "$599", status: "pending", date: "Feb 11, 2026" },
-  { id: "4", customer: "Umbrella Co",       email: "billing@umbrella.com",  plan: "Pro",        amount: "$299", status: "failed",  date: "Feb 10, 2026" },
-  { id: "5", customer: "Stark Industries",  email: "tony@stark.com",        plan: "Enterprise", amount: "$599", status: "paid",    date: "Feb 10, 2026" },
-];
+const transactions = [...allTransactions]
+  .sort((a, b) => parseDate(b.date) - parseDate(a.date))
+  .slice(0, 5);
 
 
 export default function RecentTransactions() {

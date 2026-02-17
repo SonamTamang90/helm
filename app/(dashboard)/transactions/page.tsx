@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import TransactionsTable from "@/components/dashboard/TransactionsTable";
+
+export const metadata: Metadata = {
+  title: "Transactions | Helm",
+  description: "Full record of all billing activity.",
+};
 
 export default function TransactionsPage() {
   return (

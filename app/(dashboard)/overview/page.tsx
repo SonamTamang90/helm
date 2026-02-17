@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import ChartsSection from "@/components/dashboard/ChartsSection";
 import RecentTransactions from "@/components/dashboard/RecentTransactions";
 import StatCard from "@/components/dashboard/StatCard";
 import TopCustomers from "@/components/dashboard/TopCustomers";
 import WelcomeMessage from "@/components/dashboard/WelcomeMessage";
 import { currentUser } from "@/constants/user";
+
+export const metadata: Metadata = {
+  title: "Overview | Helm",
+  description: "MRR, ARR, churn, and active customers at a glance.",
+};
 
 const MrrIcon = (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">

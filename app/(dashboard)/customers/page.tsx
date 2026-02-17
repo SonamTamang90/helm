@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import CustomersTable from "@/components/dashboard/CustomersTable";
+
+export const metadata: Metadata = {
+  title: "Customers | Helm",
+  description: "Manage and monitor your customer base.",
+};
 
 export default function CustomersPage() {
   return (

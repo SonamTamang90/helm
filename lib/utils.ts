@@ -1,9 +1,12 @@
 /**
  * Formats a number as a compact dollar amount for chart Y axes.
- * Example: 48200 → "$48k"
+ * Examples: 48200 → "$48k" · 1200000 → "$1.2M" · 2500000000 → "$2.5B"
  */
 export function formatCompactCurrency(value: number): string {
-  return `$${(value / 1000).toFixed(0)}k`;
+  if (value >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(1).replace(/\.0$/, "")}B`;
+  if (value >= 1_000_000)     return `$${(value / 1_000_000).toFixed(1).replace(/\.0$/, "")}M`;
+  if (value >= 1_000)         return `$${(value / 1_000).toFixed(0)}k`;
+  return `$${value}`;
 }
 
 /**
@@ -52,6 +55,28 @@ export function getPeriodCutoff(period: "3M" | "6M" | "12M"): Date {
   const cutoff = new Date();
   cutoff.setMonth(cutoff.getMonth() - months[period]);
   return cutoff;
+}
+
+/**
+ * Returns the page numbers to render for a pagination control.
+ * Inserts null as an ellipsis marker when pages are skipped.
+ * Example: 1 … 4 5 6 … 12
+ */
+export function getPaginationRange(current: number, total: number): (number | null)[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+
+  const range: (number | null)[] = [1];
+
+  if (current > 3)  range.push(null);
+
+  const start = Math.max(2, current - 1);
+  const end   = Math.min(total - 1, current + 1);
+  for (let i = start; i <= end; i++) range.push(i);
+
+  if (current < total - 2) range.push(null);
+  range.push(total);
+
+  return range;
 }
 
 /**

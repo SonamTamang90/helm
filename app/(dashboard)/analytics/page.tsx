@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import StatCard from "@/components/dashboard/StatCard";
+
+export const metadata: Metadata = {
+  title: "Analytics | Helm",
+  description: "Cohort retention analysis across all signup months.",
+};
 import CohortTable from "@/components/dashboard/CohortTable";
 
 const stats = [
