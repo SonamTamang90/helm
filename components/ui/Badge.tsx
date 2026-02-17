@@ -6,9 +6,9 @@ interface BadgeProps {
 }
 
 const variantClasses: Record<BadgeVariant, string> = {
-  success:     "bg-emerald-500/10 text-emerald-500",
-  warning:     "bg-amber-500/10  text-amber-500",
-  destructive: "bg-red-500/10    text-red-500",
+  success:     "bg-success/10 text-success",
+  warning:     "bg-warning/10 text-warning",
+  destructive: "bg-destructive/10 text-destructive",
   neutral:     "bg-surface-raised text-muted",
 };
 

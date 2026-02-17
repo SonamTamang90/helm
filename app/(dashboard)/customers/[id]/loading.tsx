@@ -1,8 +1,5 @@
 import Card from "@/components/ui/Card";
-
-function Skeleton({ className = "" }: { className?: string }) {
-  return <div className={`animate-pulse rounded bg-surface-raised ${className}`} />;
-}
+import Skeleton from "@/components/ui/Skeleton";
 
 export default function CustomerDetailLoading() {
   return (

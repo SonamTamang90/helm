@@ -40,34 +40,34 @@ export default function RevenueChart({ data }: { data: DataPoint[] }) {
       <AreaChart data={data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }}>
         <defs>
           <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%"  stopColor="#3b82f6" stopOpacity={0.15} />
-            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+            <stop offset="5%"  stopColor="var(--color-primary)" stopOpacity={0.15} />
+            <stop offset="95%" stopColor="var(--color-primary)" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid vertical={false} stroke="#292524" />
+        <CartesianGrid vertical={false} stroke="var(--color-surface-raised)" />
         <XAxis
           dataKey="month"
           axisLine={false}
           tickLine={false}
-          tick={{ fill: "#78716c", fontSize: 12 }}
+          tick={{ fill: "var(--color-muted)", fontSize: 12 }}
           dy={8}
         />
         <YAxis
           tickFormatter={formatCompactCurrency}
           axisLine={false}
           tickLine={false}
-          tick={{ fill: "#78716c", fontSize: 12 }}
+          tick={{ fill: "var(--color-muted)", fontSize: 12 }}
           width={44}
         />
-        <Tooltip content={<CustomTooltip />} cursor={{ stroke: "#44403c", strokeWidth: 1 }} />
+        <Tooltip content={<CustomTooltip />} cursor={{ stroke: "var(--color-surface-raised)", strokeWidth: 1 }} />
         <Area
           type="monotone"
           dataKey="mrr"
-          stroke="#3b82f6"
+          stroke="var(--color-primary)"
           strokeWidth={1.5}
           fill="url(#revenueGradient)"
           dot={false}
-          activeDot={{ r: 3, fill: "#3b82f6", strokeWidth: 0 }}
+          activeDot={{ r: 3, fill: "var(--color-primary)", strokeWidth: 0 }}
         />
       </AreaChart>
     </ResponsiveContainer>

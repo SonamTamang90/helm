@@ -22,9 +22,9 @@ export default function StatCard({
   const isNegative = trend !== "neutral" && trend !== goodDirection;
 
   const trendColor = isPositive
-    ? "text-emerald-500"
+    ? "text-success"
     : isNegative
-      ? "text-red-500"
+      ? "text-destructive"
       : "text-muted";
 
   const trendIcon =

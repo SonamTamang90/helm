@@ -45,12 +45,12 @@ interface WaterfallEntry {
 }
 
 const segmentColors: Record<string, string> = {
-  "Start MRR":   "#64748b",
-  "New":         "#34d399",
-  "Expansion":   "#22d3ee",
-  "Contraction": "#a78bfa",
-  "Churned":     "#f87171",
-  "End MRR":     "#3b82f6",
+  "Start MRR":   "var(--color-chart-neutral)",
+  "New":         "var(--color-chart-new)",
+  "Expansion":   "var(--color-chart-expansion)",
+  "Contraction": "var(--color-chart-contraction)",
+  "Churned":     "var(--color-chart-churned)",
+  "End MRR":     "var(--color-primary)",
 };
 
 function buildWaterfallData(m: MonthData): WaterfallEntry[] {
@@ -130,7 +130,7 @@ export default function MrrWaterfallChart() {
         ))}
         <span
           className={`ml-auto text-xs font-medium ${
-            net >= 0 ? "text-emerald-500" : "text-red-500"
+            net >= 0 ? "text-success" : "text-destructive"
           }`}
         >
           Net {net >= 0 ? "+" : "−"}{formatCurrency(Math.abs(net))}
@@ -139,12 +139,12 @@ export default function MrrWaterfallChart() {
 
       <ResponsiveContainer width="100%" height={280}>
         <BarChart data={data} margin={{ top: 4, right: 4, left: 0, bottom: 0 }} barSize={40}>
-          <CartesianGrid vertical={false} stroke="#292524" />
+          <CartesianGrid vertical={false} stroke="var(--color-surface-raised)" />
           <XAxis
             dataKey="name"
             axisLine={false}
             tickLine={false}
-            tick={{ fill: "#78716c", fontSize: 11 }}
+            tick={{ fill: "var(--color-muted)", fontSize: 11 }}
             dy={8}
           />
           <YAxis
@@ -152,10 +152,10 @@ export default function MrrWaterfallChart() {
             tickFormatter={formatCompactCurrency}
             axisLine={false}
             tickLine={false}
-            tick={{ fill: "#78716c", fontSize: 12 }}
+            tick={{ fill: "var(--color-muted)", fontSize: 12 }}
             width={44}
           />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: "#292524" }} />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: "var(--color-surface-raised)" }} />
 
           {/* Invisible spacer — lifts the visible bar to the correct position */}
           <Bar dataKey="offset" stackId="wf" fill="transparent" legendType="none" />

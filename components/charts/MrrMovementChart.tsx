@@ -21,10 +21,10 @@ interface MrrMovementDataPoint {
 }
 
 const series = [
-  { key: "new",         label: "New",         color: "#2dd4bf" },
-  { key: "expansion",   label: "Expansion",   color: "#38bdf8" },
-  { key: "contraction", label: "Contraction", color: "#fb923c" },
-  { key: "churned",     label: "Churned",     color: "#f87171" },
+  { key: "new",         label: "New",         color: "var(--color-chart-new)"         },
+  { key: "expansion",   label: "Expansion",   color: "var(--color-chart-expansion)"   },
+  { key: "contraction", label: "Contraction", color: "var(--color-chart-contraction)" },
+  { key: "churned",     label: "Churned",     color: "var(--color-chart-churned)"     },
 ] as const;
 
 interface TooltipEntry {
@@ -74,7 +74,7 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
       <div className="mt-2 flex items-center justify-between border-t border-border pt-2">
         <span className="text-muted">Net change</span>
         <span
-          className={`font-medium ${net >= 0 ? "text-emerald-500" : "text-red-500"}`}
+          className={`font-medium ${net >= 0 ? "text-success" : "text-destructive"}`}
         >
           {net >= 0 ? "+" : "−"}
           {formatCurrency(Math.abs(net))}
@@ -105,23 +105,23 @@ export default function MrrMovementChart({ data }: { data: MrrMovementDataPoint[
           margin={{ top: 4, right: 4, left: 0, bottom: 0 }}
           barSize={18}
         >
-          <CartesianGrid vertical={false} stroke="#292524" />
-          <ReferenceLine y={0} stroke="#57534e" strokeWidth={1} />
+          <CartesianGrid vertical={false} stroke="var(--color-surface-raised)" />
+          <ReferenceLine y={0} stroke="var(--color-border)" strokeWidth={1} />
           <XAxis
             dataKey="month"
             axisLine={false}
             tickLine={false}
-            tick={{ fill: "#78716c", fontSize: 12 }}
+            tick={{ fill: "var(--color-muted)", fontSize: 12 }}
             dy={8}
           />
           <YAxis
             tickFormatter={formatCompactCurrency}
             axisLine={false}
             tickLine={false}
-            tick={{ fill: "#78716c", fontSize: 12 }}
+            tick={{ fill: "var(--color-muted)", fontSize: 12 }}
             width={44}
           />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: "#292524" }} />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: "var(--color-surface-raised)" }} />
           <Bar dataKey="new"         stackId="stack" fill="#2dd4bf" name="new"         radius={0} />
           <Bar dataKey="expansion"   stackId="stack" fill="#38bdf8" name="expansion"   radius={0} />
           <Bar dataKey="contraction" stackId="stack" fill="#fb923c" name="contraction" radius={0} />

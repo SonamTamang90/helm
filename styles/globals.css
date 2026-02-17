@@ -21,4 +21,20 @@
   /* ─── Text ────────────────────────────────────── */
   --color-foreground:     var(--color-stone-100);  /* primary text         */
   --color-muted:          var(--color-stone-500);  /* secondary / label    */
+
+  /* ─── Accents ──────────────────────────────────── */
+  --color-primary:           var(--color-blue-600);    /* CTA, links, active    */
+  --color-primary-hover:     var(--color-blue-500);    /* primary hover state   */
+  --color-success:           var(--color-emerald-500); /* positive / up trend   */
+  --color-warning:           var(--color-amber-500);   /* caution / pending     */
+  --color-destructive:       var(--color-red-500);     /* negative / down trend */
+  --color-destructive-solid: var(--color-red-600);     /* destructive actions   */
+
+  /* ─── Chart ────────────────────────────────────── */
+  --color-chart-new:         var(--color-teal-400);    /* new MRR              */
+  --color-chart-expansion:   var(--color-cyan-400);    /* expansion MRR        */
+  --color-chart-contraction: var(--color-orange-400);  /* contraction MRR      */
+  --color-chart-churned:     var(--color-red-400);     /* churned MRR          */
+  --color-chart-neutral:     var(--color-slate-500);   /* neutral / start bars */
+  --color-chart-violet:      var(--color-violet-400);  /* pro plan accent      */
 }
