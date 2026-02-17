@@ -7,6 +7,7 @@ import Input from "@/components/ui/Input";
 import Label from "@/components/ui/Label";
 import Switch from "@/components/ui/Switch";
 import { useToast } from "@/context/ToastContext";
+import { currentUser } from "@/constants/user";
 
 type Tab = "profile" | "account" | "notifications" | "billing";
 
@@ -20,10 +21,10 @@ const tabs: { label: string; value: Tab }[] = [
 /* ─── Profile ─────────────────────────────────────────────── */
 function ProfileSection() {
   const { addToast } = useToast();
-  const [firstName, setFirstName] = useState("Sonam");
-  const [lastName,  setLastName]  = useState("Tamang");
-  const [email,     setEmail]     = useState("sonam@helm.so");
-  const [role,      setRole]      = useState("Founder");
+  const [firstName, setFirstName] = useState(currentUser.firstName);
+  const [lastName,  setLastName]  = useState(currentUser.lastName);
+  const [email,     setEmail]     = useState(currentUser.email);
+  const [role,      setRole]      = useState(currentUser.role);
 
   return (
     <div className="flex flex-col gap-6">
@@ -36,7 +37,7 @@ function ProfileSection() {
 
       {/* Avatar row */}
       <div className="flex items-center gap-4">
-        <Avatar initials="ST" size="lg" />
+        <Avatar initials={currentUser.initials} size="lg" />
         <div>
           <Button variant="secondary" size="sm">Change photo</Button>
           <p className="mt-1.5 text-xs text-muted">JPG or PNG. Max 2MB.</p>
@@ -73,9 +74,9 @@ function ProfileSection() {
 /* ─── Account ─────────────────────────────────────────────── */
 function AccountSection() {
   const { addToast } = useToast();
-  const [company,  setCompany]  = useState("Helm Inc.");
-  const [timezone, setTimezone] = useState("UTC");
-  const [currency, setCurrency] = useState("USD");
+  const [company,  setCompany]  = useState(currentUser.company);
+  const [timezone, setTimezone] = useState(currentUser.timezone);
+  const [currency, setCurrency] = useState(currentUser.currency);
 
   return (
     <div className="flex flex-col gap-6">

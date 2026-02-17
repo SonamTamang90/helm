@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import Avatar from "@/components/ui/Avatar";
 import DateRangePicker from "@/components/ui/DateRangePicker";
@@ -13,8 +14,39 @@ interface HeaderProps {
   onOpenSearch: () => void;
 }
 
+function NotificationsDropdown({ onClose }: { onClose: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose();
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [onClose]);
+
+  return (
+    <div
+      ref={ref}
+      className="absolute right-0 top-full z-50 mt-2 w-72 rounded-md border border-border bg-surface shadow-lg"
+    >
+      <div className="border-b border-border px-4 py-3">
+        <p className="text-sm font-medium text-foreground">Notifications</p>
+      </div>
+      <div className="flex flex-col items-center gap-2 px-4 py-8 text-center">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-muted">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+        <p className="text-sm text-muted">No notifications yet</p>
+      </div>
+    </div>
+  );
+}
+
 export default function Header({ onToggle, collapsed, onOpenSearch }: HeaderProps) {
   const pathname = usePathname();
+  const [notifOpen, setNotifOpen] = useState(false);
   const title = pageTitles[pathname] ?? "";
   const showDateRange = pathname !== "/settings";
 
@@ -53,15 +85,26 @@ export default function Header({ onToggle, collapsed, onOpenSearch }: HeaderProp
         <SearchTrigger onClick={onOpenSearch} />
         {showDateRange && <DateRangePicker />}
 
-        <button
-          aria-label="Notifications"
-          className="flex h-8 w-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-surface-raised hover:text-foreground"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-          </svg>
-        </button>
+        <div className="relative">
+          <button
+            aria-label="Notifications"
+            aria-expanded={notifOpen}
+            aria-haspopup="true"
+            onClick={() => setNotifOpen((o) => !o)}
+            className={`flex h-8 w-8 items-center justify-center rounded-md transition-colors ${
+              notifOpen
+                ? "bg-surface-raised text-foreground"
+                : "text-muted hover:bg-surface-raised hover:text-foreground"
+            }`}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+          </button>
+          {notifOpen && <NotificationsDropdown onClose={() => setNotifOpen(false)} />}
+        </div>
+
         <Avatar initials={currentUser.initials} />
       </div>
     </header>
