@@ -3,6 +3,7 @@ import RecentTransactions from "@/components/dashboard/RecentTransactions";
 import StatCard from "@/components/dashboard/StatCard";
 import TopCustomers from "@/components/dashboard/TopCustomers";
 import WelcomeMessage from "@/components/dashboard/WelcomeMessage";
+import { currentUser } from "@/constants/user";
 
 const MrrIcon = (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -46,7 +47,7 @@ const stats = [
 export default function OverviewPage() {
   return (
     <div className="flex flex-col gap-8">
-      <WelcomeMessage name="Sonam" />
+      <WelcomeMessage name={currentUser.name} />
 
       {/* Stat cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">

@@ -5,6 +5,7 @@ import Avatar from "@/components/ui/Avatar";
 import DateRangePicker from "@/components/ui/DateRangePicker";
 import SearchTrigger from "@/components/layout/SearchTrigger";
 import { pageTitles } from "@/constants/nav";
+import { currentUser } from "@/constants/user";
 
 interface HeaderProps {
   onToggle: () => void;
@@ -61,7 +62,7 @@ export default function Header({ onToggle, collapsed, onOpenSearch }: HeaderProp
             <path d="M13.73 21a2 2 0 0 1-3.46 0" />
           </svg>
         </button>
-        <Avatar initials="ST" />
+        <Avatar initials={currentUser.initials} />
       </div>
     </header>
   );
