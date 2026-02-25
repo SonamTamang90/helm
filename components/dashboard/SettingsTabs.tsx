@@ -197,15 +197,15 @@ function BillingSection() {
 
       {/* Current plan */}
       <div className="rounded border border-border bg-background p-4">
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs text-muted">Current plan</p>
             <p className="mt-1 text-base font-semibold text-foreground">Pro</p>
             <p className="mt-0.5 text-sm text-muted">$299 / month · Renews Mar 12, 2026</p>
           </div>
-          <div className="flex gap-2">
-            <Button variant="secondary" size="sm">Change plan</Button>
-            <Button variant="destructive" size="sm">Cancel</Button>
+          <div className="flex shrink-0 gap-2">
+            <Button variant="secondary" size="sm" className="whitespace-nowrap">Change plan</Button>
+            <Button variant="destructive" size="sm" className="whitespace-nowrap">Cancel</Button>
           </div>
         </div>
       </div>
@@ -242,14 +242,14 @@ export default function SettingsTabs() {
   const [activeTab, setActiveTab] = useState<Tab>("profile");
 
   return (
-    <div className="flex gap-8">
-      {/* Sidebar nav */}
-      <nav className="flex w-44 shrink-0 flex-col gap-0.5">
+    <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
+      {/* Horizontal tabs on mobile, vertical sidebar on desktop */}
+      <nav className="scrollbar-hide -mx-6 flex gap-2 overflow-x-auto px-6 lg:mx-0 lg:w-44 lg:shrink-0 lg:flex-col lg:gap-0.5 lg:overflow-x-visible lg:px-0">
         {tabs.map((tab) => (
           <button
             key={tab.value}
             onClick={() => setActiveTab(tab.value)}
-            className={`rounded px-3 py-2 text-left text-sm font-medium transition-colors ${
+            className={`shrink-0 rounded px-3 py-2 text-sm font-medium transition-colors lg:text-left ${
               activeTab === tab.value
                 ? "bg-surface-raised text-foreground"
                 : "text-muted hover:bg-surface-raised/60 hover:text-foreground"
@@ -261,7 +261,7 @@ export default function SettingsTabs() {
       </nav>
 
       {/* Content */}
-      <div className="flex-1 rounded border border-border bg-surface p-6">
+      <div className="flex-1 rounded border border-border bg-surface p-4 sm:p-6">
         {sectionMap[activeTab]}
       </div>
     </div>
